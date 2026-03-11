@@ -1,0 +1,79 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+venv/
+.venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# PyTorch checkpoints (keep .pth model files, ignore checkpoints)
+*_checkpoint.pth
+checkpoint.pth
+
+# Environment
+.env
+*.env.local
+
+# IDE
+.idea/
+.vscode/settings.json
+*.swp
+*.swo
+*.DS_Store
+
+# Logs
+*.log
+
+# Large dataset directories (too big for git)
+data/
+Processed/
+
+# Node (if ever adding a proper frontend build step)
+node_modules/
+dist/
+
+# Docker
+.dockerignore
+
+# ── Project binaries (Excluded by standard practice) ────────
+# Trained model weights (Use Git LFS or GitHub Releases for these)
+models/*.pth
+models/*.pkl
+
+# Cloudflare tunnel binary
+cloudflared
+
+# PID files
+*.pid
+
+# Pip caches
+.pip_cache/
+.pip_tmp/
+
+# Ruff cache
+.ruff_cache/
+
+# Logs
+*.log
+api_tunnel.log
+gui_tunnel.log
+test_tunnel.log
+retrain_live.log
+retrain.log
+server.log
+frontend.log
+
+# Large dataset directories
+data/
+Processed/

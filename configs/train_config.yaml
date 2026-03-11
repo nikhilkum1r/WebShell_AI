@@ -1,0 +1,24 @@
+# ────────────────────────────────────────────────────────────
+# Training Pipeline Configuration
+# ────────────────────────────────────────────────────────────
+
+dataset:
+  max_length: 500
+  train_split: 0.70
+  val_split: 0.15
+  test_split: 0.15
+  random_state: 42
+
+training:
+  batch_size: 32
+  epochs: 50
+  learning_rate: 0.001
+  patience: 3
+  min_delta: 0.0
+
+word2vec:
+  vector_size: 100
+  window: 5
+  min_count: 1
+  sg: 0
+  workers: 4

@@ -1,0 +1,25 @@
+# ────────────────────────────────────────────────────────────
+# Model Architecture Configurations
+# ────────────────────────────────────────────────────────────
+
+global:
+  embedding_dim: 100
+
+webshell_detector:
+  hidden_dim: 128
+  attention_dim: 64
+
+text_cnn:
+  num_filters: 100
+  filter_sizes: [3, 4, 5]
+
+text_rnn:
+  hidden_dim: 128
+  num_layers: 2
+  bidirectional: true
+
+transformer:
+  num_heads: 4
+  num_layers: 2
+  hidden_dim: 128
+  ff_dim: 512

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="Webshell Detector v2 — AI-powered server-side malware detection with ensemble models, heuristic analysis, and explainability." />
+    <title>Webshell Detector v2 | AI Security Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet" />
+
+    <!-- External Dependencies -->
+    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/main.css" />
+</head>
+
+<body>
+
+    <div class="wrap">
+
+        <!-- ── Header ── -->
+        <header>
+            <a class="logo" href="#">
+                <div class="logo-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                        stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="logo-name">Webshell<span>Detector</span></div>
+                    <div class="logo-version">v2.0 — M.Tech Dissertation</div>
+                </div>
+            </a>
+            <div class="hdr-right">
+                <div class="badge"><span class="pulse"></span> AI Security System</div>
+            </div>
+        </header>
+
+        <!-- ── Hero ── -->
+        <section class="hero">
+            <h1>AI-Powered <em>Webshell Detection</em><br />With Explainability</h1>
+            <p>Four deep learning architectures trained on PHP webshell datasets + heuristic feature analysis.
+                Single-model or ensemble mode. Upload one file or scan 50 at once.</p>
+
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-num">98.7%</div>
+                    <div class="stat-lbl">Peak Accuracy</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">4</div>
+                    <div class="stat-lbl">DL Models</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num" id="s-scans">0</div>
+                    <div class="stat-lbl">Session Scans</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num" id="s-threats">0</div>
+                    <div class="stat-lbl">Threats Found</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num" id="s-latency">—</div>
+                    <div class="stat-lbl">Last Latency</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Main grid ── -->
+        <div class="grid">
+
+            <!-- Detection card -->
+            <div class="card">
+                <div class="card-hdr">
+                    <i data-feather="search" width="14" height="14"></i> Analyse Content
+                </div>
+
+                <!-- Tabs -->
+                <div class="tabs" role="tablist">
+                    <button class="tab on" onclick="tab('text')" id="tab-text">
+                        <i data-feather="code" width="13" height="13"></i> Paste Code
+                    </button>
+                    <button class="tab" onclick="tab('file')" id="tab-file">
+                        <i data-feather="upload-cloud" width="13" height="13"></i> Upload File
+                    </button>
+                    <button class="tab" onclick="tab('bulk')" id="tab-bulk">
+                        <i data-feather="layers" width="13" height="13"></i> Bulk Scan
+                    </button>
+                </div>
+
+                <!-- Text panel -->
+                <div class="panel on" id="panel-text">
+                    <!-- Code editor toolbar -->
+                    <div class="code-toolbar">
+                        <div class="code-lang-tags">
+                            <span class="lang-tag active" onclick="setLangHint(this, 'PHP')">PHP</span>
+                            <span class="lang-tag" onclick="setLangHint(this, 'PHP / ASP')">ASP</span>
+                            <span class="lang-tag" onclick="setLangHint(this, 'PHP / ASP (Webshell)')">Webshell</span>
+                        </div>
+                        <div style="font-size:.65rem;color:var(--muted);" title="Model trained on PHP/ASP datasets">🎯
+                            PHP/ASP trained</div>
+                        <div class="code-toolbar-actions">
+                            <button class="toolbar-btn" onclick="clearCode()" title="Clear editor">
+                                <i data-feather="trash-2" width="13" height="13"></i>
+                            </button>
+                            <button class="toolbar-btn" onclick="pasteFromClipboard()" title="Paste from clipboard">
+                                <i data-feather="clipboard" width="13" height="13"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- The textarea -->
+                    <textarea id="code-input" rows="12"
+                        placeholder="Paste PHP or ASP source code here…&#10;&#10;⚠ Model trained on PHP/ASP webshell datasets only.&#10;Minimum 20 characters required.&#10;&#10;Example webshell:&#10;&lt;?php eval($_POST['cmd']); ?&gt;"
+                        oninput="onCodeInput(this)" spellcheck="false" autocorrect="off"
+                        autocapitalize="off"></textarea>
+                    <!-- Footer: char count + validation hint -->
+                    <div class="code-footer" id="code-footer">
+                        <span id="code-counter" class="code-counter muted">0 chars · 0 lines</span>
+                        <span id="code-hint" class="code-hint"></span>
+                    </div>
+                </div>
+
+                <!-- File panel -->
+                <div class="panel" id="panel-file">
+                    <div class="dz" id="dz-single" ondragover="dzOver(event,'dz-single')"
+                        ondragleave="dzLeave('dz-single')" ondrop="dzDrop(event,'fi-input')">
+                        <input type="file" id="fi-input" onchange="dzChange(this,'fi-name')" />
+                        <i data-feather="upload-cloud" width="44" height="44" class="dz-icon"></i>
+                        <p style="margin-top:14px;"><strong>Drag & drop</strong> a file or <strong>click to
+                                browse</strong></p>
+                        <p>PHP and ASP files only — model trained on PHP/ASP datasets</p>
+                        <div class="dz-name" id="fi-name"></div>
+                    </div>
+                </div>
+
+                <!-- Bulk panel -->
+                <div class="panel" id="panel-bulk">
+                    <div class="dz" id="dz-bulk" ondragover="dzOver(event,'dz-bulk')" ondragleave="dzLeave('dz-bulk')"
+                        ondrop="dzDrop(event,'bulk-input')">
+                        <input type="file" id="bulk-input" multiple onchange="dzChange(this,'bulk-name')" />
+                        <i data-feather="folder" width="44" height="44" class="dz-icon"></i>
+                        <p style="margin-top:14px;"><strong>Select multiple files</strong> for batch analysis</p>
+                        <p style="margin-top:4px;">Up to 50 files per scan</p>
+                        <div class="dz-name" id="bulk-name"></div>
+                    </div>
+                    <div id="bulk-table-wrap">
+                        <table class="bulk-tbl">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Filename</th>
+                                    <th>Result</th>
+                                    <th style="text-align:right">Conf.</th>
+                                    <th style="text-align:right">Entropy</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bulk-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Model selector -->
+                <div class="form-row">
+                    <label class="form-label" for="model-sel">Model Selection</label>
+                    <select id="model-sel">
+                        <option value="WebshellDetector">GRU + Attention (WebshellDetector) — Recommended</option>
+                        <option value="TextCNN">TextCNN — Fastest</option>
+                        <option value="TextRNN">TextRNN (BiLSTM)</option>
+                        <option value="TransformerClassifier">Transformer Classifier — Highest Capacity</option>
+                        <option value="ensemble">⚡ Ensemble — All 4 Models Vote</option>
+                    </select>
+                </div>
+
+                <button class="btn-go" id="go-btn" onclick="run()">
+                    <div class="spinner" id="spinner"></div>
+                    <i data-feather="shield" width="17" height="17" id="go-icon"></i>
+                    <span id="go-txt">Analyse Now</span>
+                </button>
+
+                <!-- Result -->
+                <div id="result-box" class="gone">
+                    <div class="banner" id="banner">
+                        <div class="b-icon" id="b-icon"></div>
+                        <div>
+                            <div class="b-label" id="b-label"></div>
+                            <div class="b-sub" id="b-sub"></div>
+                        </div>
+                    </div>
+                    <div class="cbar-wrap" id="cbar">
+                        <div class="cbar-head"><span>Model Confidence</span><span id="cbar-pct"></span></div>
+                        <div class="cbar-track">
+                            <div class="cbar-fill" id="cbar-fill" style="width:0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Explanation -->
+                    <div id="explanation-box" class="gone" style="margin-top:20px;">
+                        <div class="card-hdr" style="margin-bottom:10px;">
+                            <i data-feather="message-square" width="14" height="14"></i> AI Reasoning
+                        </div>
+                        <div id="exp-text"
+                            style="font-size:14px; line-height:1.6; color:rgba(255,255,255,0.85); background:rgba(255,255,255,0.05); padding:12px; border-radius:8px; border-left:3px solid var(--accent);">
+                        </div>
+                    </div>
+
+                    <!-- Annotated Code -->
+                    <div id="code-box" class="gone" style="margin-top:20px;">
+                        <div class="card-hdr"
+                            style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+                            <span><i data-feather="code" width="14" height="14"></i> Annotated Source</span>
+                            <button class="btn-sm" onclick="toggleCode()" id="code-toggle-btn">Show Highlighted
+                                Code</button>
+                        </div>
+                        <div id="code-pre-wrap" class="gone">
+                            <pre id="code-view"></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ensemble votes -->
+                <div id="votes-box" class="gone">
+                    <div class="card-hdr" style="margin-top:22px; margin-bottom:14px;">
+                        <i data-feather="bar-chart-2" width="14" height="14"></i> Ensemble Votes
+                    </div>
+                    <div id="votes-list"></div>
+                </div>
+
+                <!-- Features breakdown -->
+                <div id="features-box" class="gone">
+                    <div class="card-hdr" style="margin-top:22px; margin-bottom:14px;">
+                        <i data-feather="zap" width="14" height="14"></i> Heuristic Analysis
+                    </div>
+                    <div class="feat-grid" id="feat-chips"></div>
+                    <div class="danger-funcs" id="dfuncs-wrap">
+                        <div class="danger-funcs-title">Dangerous Functions Found</div>
+                        <div class="func-tags" id="dfuncs-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+
+                <!-- API Status -->
+                <div class="card">
+                    <div class="card-hdr"><i data-feather="activity" width="14" height="14"></i> API Status</div>
+                    <div class="api-stat">
+                        <div class="sdot wait" id="sdot"></div>
+                        <span id="stext">Connecting…</span>
+                    </div>
+                    <div class="api-info">
+                        <div>Endpoint: <code>http://localhost:8000</code></div>
+                        <div id="s-device" style="margin-top:4px;"></div>
+                        <div id="s-ver" style="margin-top:2px;"></div>
+                    </div>
+                </div>
+
+                <!-- Models -->
+                <div class="card">
+                    <div class="card-hdr"><i data-feather="cpu" width="14" height="14"></i> Models</div>
+                    <div class="m-row">
+                        <div>
+                            <div class="m-name">WebshellDetector</div>
+                            <div class="m-type">GRU + Self-Attention</div>
+                        </div>
+                        <div class="m-acc">99.1%</div>
+                    </div>
+                    <div class="m-row">
+                        <div>
+                            <div class="m-name">TextCNN</div>
+                            <div class="m-type">Convolutional Neural Net</div>
+                        </div>
+                        <div class="m-acc">98.1%</div>
+                    </div>
+                    <div class="m-row">
+                        <div>
+                            <div class="m-name">TextRNN</div>
+                            <div class="m-type">Bidirectional LSTM</div>
+                        </div>
+                        <div class="m-acc">70.9%</div>
+                    </div>
+                    <div class="m-row">
+                        <div>
+                            <div class="m-name">Transformer</div>
+                            <div class="m-type">Encoder Classifier</div>
+                        </div>
+                        <div class="m-acc">95.8%</div>
+                    </div>
+                </div>
+
+                <!-- Benchmarks -->
+                <div class="card">
+                    <div class="card-hdr"><i data-feather="trending-up" width="14" height="14"></i> Benchmarks</div>
+                    <table class="bench-table" id="bench-table">
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>Acc.</th>
+                                <th>F1</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- History -->
+                <div class="card">
+                    <div class="card-hdr"><i data-feather="clock" width="14" height="14"></i> Scan History</div>
+                    <div class="hist-list" id="hist-list">
+                        <div id="no-hist">No scans yet this session.</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Toasts -->
+    <div class="toast-wrap" id="toasts"></div>
+
+    <!-- Custom JS -->
+    <script src="js/config.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+
+</html>
